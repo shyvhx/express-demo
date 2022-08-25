@@ -1,19 +1,21 @@
 
 const express = require('express');
+const helmet = require('helmet')
+const logger = require('./logger.js')
 const Joi = require('joi')  //class - Pascal naming
 const app = express();
+const morgan = require('morgan')
 
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Listening on port ${PORT}....`))
+
 app.use(express.json());
-
-
-
-
-
-
-
+app.use(express.urlencoded({extended: true}));
+app.use(express.static('public'))
+//app.use(logger);
+app.use(helmet());
+app.use(morgan('tiny'));
 
 // Joi function for course name validation
 function validateCourse(course){
@@ -25,12 +27,6 @@ function validateCourse(course){
     return schema.validate(course);
 
 }
-
-
-
-
-
-
 
 
 
