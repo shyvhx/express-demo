@@ -1,4 +1,4 @@
-
+const config = require('config');
 const express = require('express');
 const helmet = require('helmet')
 const logger = require('./logger.js')
@@ -15,7 +15,24 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'))
 //app.use(logger);
 app.use(helmet());
-app.use(morgan('tiny'));
+
+
+if (app.get('env') === 'development') {
+    app.use(morgan('tiny'));
+    console.log('Morgan enabled...');
+}
+
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`)
+console.log(`app: ${app.get('env')}`);
+
+
+// Configuration
+console.log('App name:' + config.get('name'));
+console.log('Mail server:' + config.get('mail.host'));
+//console.log('Mail password' + config.get('mail.password'));
+
+
+
 
 // Joi function for course name validation
 function validateCourse(course){
