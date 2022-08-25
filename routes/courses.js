@@ -27,7 +27,7 @@ const courses = [
 
 ];
 
-router.get('/api/courses/:id', (req,res) => {
+router.get('/:id', (req,res) => {
     const course = courses.find( c => c.id === parseInt(req.params.id) );
     if(!course) return res.status(404).send('Course with given ID not found');
     res.send(course);
@@ -40,7 +40,7 @@ router.get('/api/courses/:id', (req,res) => {
 
 
 //POST METHODS
-router.post('/api/courses', (req,res) => {
+router.post('/', (req,res) => {
 
     // validate the new course's name
     // if invalid return 400 - Bad request
@@ -64,7 +64,7 @@ router.post('/api/courses', (req,res) => {
 
 
 // Put request for updating a course's name on the server's list
-router.put('/api/courses/:id', (req,res) => {
+router.put('/:id', (req,res) => {
     //CHECK IF COURSE WITH GIVEN ID EXISTS. IF NOT RETURN 404 BAD REQUEST
     const course = courses.find( c => c.id === parseInt(req.params.id) );
     if(!course) return res.status(404).send('Course with given ID not found');
@@ -83,7 +83,7 @@ router.put('/api/courses/:id', (req,res) => {
 
 
 //DELETE METHOD
-router.delete('/api/courses/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     //Look up the course
     const course = courses.find( c => c.id === parseInt(req.params.id) );
     //If it does not exist return 404
@@ -101,7 +101,7 @@ router.delete('/api/courses/:id', (req, res) => {
 });
 
 
-router.get('/api/courses', (req,res) => {
+router.get('/', (req,res) => {
     res.send(courses);
 });
 
