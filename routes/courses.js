@@ -1,6 +1,6 @@
 const express = require('express');
 const Joi = require('joi')  //class - Pascal naming
-
+const mongoose = require('mongoose');
 
 
 
@@ -19,29 +19,37 @@ function validateCourse(course){
 }
 
 
+const courseSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 255,
+    },
 
-const courses = [
-    { id:1, name: 'course1'},
-    { id:2, name: 'course2'},
-    { id:3, name: 'course3'},
+});
+const Course = mongoose.model('Course', courseSchema);
 
-];
+//GET METHODS
+router.get('/', async (req,res) => {
+    const courses = await Course.find().sort('name');
+    res.send(courses);
+});
 
-router.get('/:id', (req,res) => {
-    const course = courses.find( c => c.id === parseInt(req.params.id) );
+
+router.get('/:id', async (req,res) => {
+    const course = await Course.findById(req.params.id);
+    console.log(course);
     if(!course) return res.status(404).send('Course with given ID not found');
+
     res.send(course);
-
-
-
 });
 
 
 
-
 //POST METHODS
-router.post('/', (req,res) => {
-
+router.post('/', async (req,res) => {
+    console.log(req.body.name)
     // validate the new course's name
     // if invalid return 400 - Bad request
     const { error } = validateCourse(req.body);  // result.error
@@ -49,33 +57,31 @@ router.post('/', (req,res) => {
         
     
 
-
     //if validation goes ok - create new object - push it to the server list
-    const course = { id: courses.length+1,
-    name: req.body.name, 
-    };
-    courses.push(course);
+    let course = new Course({ name: req.body.name, });
+    course = await course.save();
     res.send(course);
 
 });
 
 
+
+
+
+
+
 //PUT METHODS
-
-
 // Put request for updating a course's name on the server's list
-router.put('/:id', (req,res) => {
-    //CHECK IF COURSE WITH GIVEN ID EXISTS. IF NOT RETURN 404 BAD REQUEST
-    const course = courses.find( c => c.id === parseInt(req.params.id) );
-    if(!course) return res.status(404).send('Course with given ID not found');
-
+router.put('/:id', async (req,res) => {
     // validate new given name
     // if invalid return 400 - Bad request
     const { error } = validateCourse(req.body);  // result.error
     if(error)   return res.status(400).send(error.details[0].message);
 
-    // update course
-    course.name = req.body.name;
+
+    const course = await Course.findByIdAndUpdate(req.params.id, { name: req.body.name}, { new: true});
+    if(!course) return res.status(404).send('Course with given ID not found');
+
     res.send(course);
 
 
@@ -83,28 +89,10 @@ router.put('/:id', (req,res) => {
 
 
 //DELETE METHOD
-router.delete('/:id', (req, res) => {
-    //Look up the course
-    const course = courses.find( c => c.id === parseInt(req.params.id) );
-    //If it does not exist return 404
+router.delete('/:id', async (req, res) => {
+    const course = await Course.findByIdAndRemove(req.params.id);
     if(!course) return res.status(404).send('Course with given ID not found');
-    
-
-    //delete
-    const index = courses.indexOf(course);
-    courses.splice(index,1);
-
-
-
     res.send(course);
-
 });
 
-
-router.get('/', (req,res) => {
-    res.send(courses);
-});
-
-
-
-module.exports = router;
+module.exports = router; 
