@@ -1,34 +1,13 @@
 const express = require('express');
 const Joi = require('joi')  //class - Pascal naming
 const mongoose = require('mongoose');
-
+const { Course, validateCourse } = require('../models/course')
 
 
 const router = express.Router();
 
 
-// Joi function for course name validation
-function validateCourse(course){
-    const schema = Joi.object(
-        {
-            name: Joi.string().min(3).required(),
-        }
-    );
-    return schema.validate(course);
 
-}
-
-
-const courseSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 255,
-    },
-
-});
-const Course = mongoose.model('Course', courseSchema);
 
 //GET METHODS
 router.get('/', async (req,res) => {
