@@ -8,6 +8,7 @@ const morgan = require('morgan')
 const debug = require('debug')('app:startup');
 const courses = require('./routes/courses');
 const home = require('./routes/home')
+const customers = require('./routes/customers')
 
 
 app.set('view engine', 'pug');
@@ -31,6 +32,7 @@ app.use(express.static('public'))
 //app.use(logger);
 app.use(helmet());
 app.use('/api/courses', courses)
+app.use('/api/customers', customers)
 app.use('/',home)
 
 
